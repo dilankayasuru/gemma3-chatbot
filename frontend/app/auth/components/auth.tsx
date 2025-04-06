@@ -2,13 +2,15 @@
 import { apiCheckUser, apiLogin, apiRegister } from "@/app/api";
 import { EmailIcon, LockIcon, PersonIcon } from "@/app/components/icons";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/stores/userSlice";
 import { Loading } from "@/app/components/loading";
+import { useAppSelector } from "@/stores/hooks";
 
 export const Auth = () => {
     const router = useRouter();
+
     const [step, setStep] = useState("init");
     const [data, setData] = useState({
         name: "",
@@ -18,7 +20,16 @@ export const Auth = () => {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    const user = useAppSelector((state) => state.user.value);
     const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        if (user.userId) {
+            router.push("/");
+        }
+    }, [user, router])
 
     const handleLogin = async (event: React.FormEvent) => {
         setLoading(true);
@@ -99,7 +110,7 @@ export const Auth = () => {
         setLoading(true);
         setError("");
         event.preventDefault();
-        
+
         if (!data.email) {
             setError("Please enter your email");
             setLoading(false);

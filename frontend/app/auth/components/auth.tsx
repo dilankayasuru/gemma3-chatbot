@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "@/stores/userSlice";
+import { Loading } from "@/app/components/loading";
 
 export const Auth = () => {
     const router = useRouter();
@@ -94,10 +95,14 @@ export const Auth = () => {
         }
     }
 
-    const changeStep = async () => {
+    const changeStep = async (event: React.FormEvent) => {
+        setLoading(true);
         setError("");
+        event.preventDefault();
+        
         if (!data.email) {
             setError("Please enter your email");
+            setLoading(false);
             return;
         }
         try {
@@ -109,11 +114,17 @@ export const Auth = () => {
                 setData({ ...data, name: user.name })
                 setStep("login");
             }
+            setLoading(false);
 
         } catch (error) {
             setError("Unexpected error occurred!");
             console.error(error);
+            setLoading(false);
         }
+    }
+
+    if (loading) {
+        return <Loading />
     }
 
     return (
@@ -187,7 +198,7 @@ export const Auth = () => {
                         </> :
                         <>
                             <p className="text-lg">Log in or sign up</p>
-                            <div className="w-full py-8 pb-4 max-w-sm">
+                            <form className="w-full py-8 pb-4 max-w-sm" onSubmit={changeStep} method="POST">
                                 <div className="flex items-center justify-between px-4 p-2 bg-accent rounded-xl w-full mb-4 gap-2">
                                     <EmailIcon className="opacity-50" />
                                     <input
@@ -201,8 +212,8 @@ export const Auth = () => {
                                         required
                                     />
                                 </div>
-                                <button className="bg-primary px-4 py-2 w-full rounded-xl font-medium" onClick={changeStep}>Continue</button>
-                            </div>
+                                <button className="bg-primary px-4 py-2 w-full rounded-xl font-medium" disabled={loading}>Continue</button>
+                            </form>
                         </>)
             }
             {

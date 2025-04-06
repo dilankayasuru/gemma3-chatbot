@@ -22,6 +22,12 @@ export const register = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ error: "User already exists!" });
         }
 
+        let passwordRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ error: "Password must be 8+ characters with uppercase, lowercase, number, and special character." });
+        }
+
         const userId = email.replace(/[^a-zA-Z0-9_-]/g, '_');
 
         const userResponce = await chatClient.queryUsers({ id: { $eq: userId } });

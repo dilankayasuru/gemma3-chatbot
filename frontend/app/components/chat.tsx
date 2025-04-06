@@ -25,15 +25,15 @@ export const Chat = () => {
     }
 
     return (
-        <div className="pt-28 pb-8 px-4 flex flex-col justify-end">
+        <div className="pt-28 pb-8 px-4 flex flex-col justify-end md:max-w-5xl md:items-center md:w-full md:mx-auto md:mb-20">
             {
                 messages.map((message, idx) => (
                     <Fragment key={idx}>
-                        <div className="self-end bg-primary p-4 rounded-2xl w-fit mb-2 max-w-xs break-words"><Markdown>{message.message}</Markdown></div>
+                        <div className="self-end bg-primary p-4 rounded-2xl w-fit mb-2 max-w-xs break-words md:max-w-2xl"><Markdown>{message.message}</Markdown></div>
                         {message.createdAt &&
                             <div className="self-end text-sm mb-4">{new Date(message.createdAt).toLocaleString()}</div>
                         }
-                        <div className={`bg-accent p-4 rounded-2xl mr-8 w-fit max-w-xs mb-4 break-words ${message.reply === "thinking..." ? 'animate-pulse' : null}`}><Markdown>{message.reply}</Markdown></div>
+                        <div className={`self-start bg-accent p-4 rounded-2xl mr-8 w-fit max-w-xs mb-4 break-words md:max-w-2xl ${message.reply === "thinking..." ? 'animate-pulse' : null}`}><Markdown>{message.reply}</Markdown></div>
                     </Fragment>
                 ))
             }

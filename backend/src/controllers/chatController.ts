@@ -5,10 +5,12 @@ import { User } from "../models/user";
 import { Chat } from "../models/message";
 
 export const chat = async (req: Request, res: Response): Promise<any> => {
-    const { message, userId } = req.body;
+    const { message } = req.body;
 
-    if (!message || !userId) {
-        return res.status(400).json({ error: "Message and user are required!" });
+    const userId = req.user.userId;
+
+    if (!message) {
+        return res.status(400).json({ error: "Message required!" });
     }
 
     try {
@@ -28,10 +30,18 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ error: "Please register first!" })
         }
 
+        let chats = await Chat.find({ userId: userId });
+
+        const context = chats.flatMap(chat => [
+            { role: 'user', content: chat.message },
+            { role: 'assistant', content: chat.reply },
+        ])
+
         // Send message to ollama model
         const response = await axios.post(OLLAMA_URI!, {
             model: "gemma3:1b",
             messages: [
+                ...context,
                 { role: "user", content: message }
             ],
             stream: false
@@ -53,8 +63,10 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
         await channel.create();
         await channel.sendMessage({ text: assistantMessage, user_id: 'ai_bot' });
 
+        chats = await Chat.find({ userId: userId });
+
         res.status(200).json({
-            reply: assistantMessage
+            messages: chats
         });
 
     } catch (error) {
@@ -64,11 +76,8 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
 }
 
 export const getMessages = async (req: Request, res: Response): Promise<any> => {
-    const { userId } = req.body;
 
-    if (!userId) {
-        res.status(400).json({ error: "User Id is required!" });
-    }
+    const userId = req.user.userId;
 
     try {
         const chats = await Chat.find({ userId: userId });

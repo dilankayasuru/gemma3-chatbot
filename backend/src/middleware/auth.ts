@@ -6,7 +6,7 @@ dotenv.config();
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
-const authenticate = async (req: Request, res: Response, next: Function) => {
+export const authenticate = async (req: Request, res: Response, next: Function) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
@@ -17,8 +17,8 @@ const authenticate = async (req: Request, res: Response, next: Function) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY as string) as jwt.JwtPayload;
-
-        const user = decoded && decoded.user && await User.findOne({ email: decoded.user.email });
+        
+        const user = await User.findOne({ email: decoded.email });
 
         if (!user) {
             throw res.status(403).send('User does not exists!');
@@ -31,5 +31,3 @@ const authenticate = async (req: Request, res: Response, next: Function) => {
         res.status(500).send('Internal server error!');
     }
 }
-
-module.exports = { authenticate };

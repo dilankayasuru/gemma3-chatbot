@@ -3,9 +3,18 @@ import { useAppSelector } from "@/stores/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { Avatar } from "./avatar";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
     const user = useAppSelector((state) => state.user.value);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!user.email) {
+            router.push("/auth");
+        }
+    }, [user, router]);
 
     return (
         <div className="p-4 bg-accent shadow-xl fixed top-0 w-full z-20 flex items-center justify-between gap-4">

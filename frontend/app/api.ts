@@ -18,3 +18,25 @@ export const apiLogin = async (email: string, password: string) => {
 export const apiRegister = async (name: string, email: string, password: string) => {
     return await axios.post(`${APP_URI!}/api/signup`, { name: name, email: email, password: password }).then((res) => res.data);
 }
+
+export const apiSendMessage = async (message: string) => {
+
+    const token = localStorage.getItem("token");
+
+    return await axios.post(
+        `${APP_URI!}/api/chat`,
+        { message: message },
+        { headers: { 'Authorization': `Bearer ${token}` } }
+    ).then((res) => res.data);
+}
+
+export const apiGetMessages = async () => {
+
+    const token = localStorage.getItem("token");
+
+    return await axios.post(
+        `${APP_URI!}/api/messages`,
+        {},
+        { headers: { 'Authorization': `Bearer ${token}` } }
+    ).then((res) => res.data);
+}

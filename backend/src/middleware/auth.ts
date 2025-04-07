@@ -6,7 +6,7 @@ dotenv.config();
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
-export const authenticate = async (req: Request, res: Response, next: Function) => {
+export const authenticate = async (req: Request, res: Response, next: Function): Promise<any> => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
@@ -24,7 +24,7 @@ export const authenticate = async (req: Request, res: Response, next: Function) 
             throw res.status(403).send('User does not exists!');
         }
 
-        (req as any).user = user;
+        req.user = user;
         next();
     }
     catch (error) {

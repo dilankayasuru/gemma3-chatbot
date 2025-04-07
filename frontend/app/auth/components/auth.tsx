@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { login } from "@/stores/userSlice";
 import { Loading } from "@/app/components/loading";
 import { useAppSelector } from "@/stores/hooks";
+import { isAxiosError } from "axios";
 
 export const Auth = () => {
     const router = useRouter();
@@ -15,7 +16,7 @@ export const Auth = () => {
     const [data, setData] = useState({
         name: "",
         email: "",
-        passowrd: "",
+        password: "",
         confirmPassword: "",
     });
     const [loading, setLoading] = useState(false);
@@ -35,14 +36,14 @@ export const Auth = () => {
         setLoading(true);
         setError("");
         event.preventDefault();
-        if (!data.passowrd) {
+        if (!data.password) {
             setError("Please enter your password.");
             setLoading(false);
             return;
         }
 
         try {
-            const user = await apiLogin(data.email, data.passowrd);
+            const user = await apiLogin(data.email, data.password);
 
             if (user.token) {
                 localStorage.setItem("token", user.token);
@@ -55,7 +56,7 @@ export const Auth = () => {
             }
             setLoading(false);
         } catch (error) {
-            if (error.response) {
+            if (isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {
                 setError("Unexpected error occurred!");
@@ -70,20 +71,20 @@ export const Auth = () => {
         setError("");
         event.preventDefault();
 
-        if (!data.email || !data.name || !data.passowrd || !data.confirmPassword) {
+        if (!data.email || !data.name || !data.password || !data.confirmPassword) {
             setError("Please fill all the required fields.");
             setLoading(false);
             return;
         }
 
-        if (data.passowrd !== data.confirmPassword) {
+        if (data.password !== data.confirmPassword) {
             setError("Confirm password is not matching");
             setLoading(false);
             return;
         }
 
         try {
-            const user = await apiRegister(data.name, data.email, data.passowrd);
+            const user = await apiRegister(data.name, data.email, data.password);
 
             if (user.token) {
                 localStorage.setItem("token", user.token);
@@ -97,7 +98,7 @@ export const Auth = () => {
             setLoading(false);
 
         } catch (error) {
-            if (error.response) {
+            if (isAxiosError(error) && error.response) {
                 setError(error.response.data.error);
             } else {
                 setError("Unexpected error occurred!");
@@ -166,8 +167,8 @@ export const Auth = () => {
                                     aria-label="Enter your password"
                                     className="outline-none w-full"
                                     name="password"
-                                    value={data.passowrd}
-                                    onChange={(e) => setData({ ...data, passowrd: e.target.value })}
+                                    value={data.password}
+                                    onChange={(e) => setData({ ...data, password: e.target.value })}
                                     required
                                 />
                             </div>
@@ -199,8 +200,8 @@ export const Auth = () => {
                                         aria-label="Enter your password"
                                         className="outline-none w-full"
                                         name="password"
-                                        value={data.passowrd}
-                                        onChange={(e) => setData({ ...data, passowrd: e.target.value })}
+                                        value={data.password}
+                                        onChange={(e) => setData({ ...data, password: e.target.value })}
                                         required
                                     />
                                 </div>

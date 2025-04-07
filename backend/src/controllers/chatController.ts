@@ -7,7 +7,7 @@ import { Chat } from "../models/message";
 export const chat = async (req: Request, res: Response): Promise<any> => {
     const { message } = req.body;
 
-    const userId = req.user.userId;
+    const userId = req.user!.userId;
 
     if (!message) {
         return res.status(400).json({ error: "Message required!" });
@@ -30,7 +30,7 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ error: "Please register first!" })
         }
 
-        let chats = await Chat.find({ userId: userId });
+        let chats = await Chat.find({ userId: userId }).sort({ createdAt: -1 }).limit(10);
 
         const context = chats.flatMap(chat => [
             { role: 'user', content: chat.message },
@@ -77,7 +77,7 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
 
 export const getMessages = async (req: Request, res: Response): Promise<any> => {
 
-    const userId = req.user.userId;
+    const userId = req.user!.userId;
 
     try {
         const chats = await Chat.find({ userId: userId });

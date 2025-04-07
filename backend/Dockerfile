@@ -3,7 +3,7 @@ FROM node:20.16-alpine3.19 AS build
 
 WORKDIR /build
 
-COPY package*.json .
+COPY package*.json ./
 
 RUN npm install
 
@@ -16,7 +16,7 @@ FROM node:20.16-alpine3.19 AS production
 
 WORKDIR /build
 
-COPY package*.json .
+COPY package*.json ./
 
 RUN npm ci --omit=dev && npm cache clean --force
 

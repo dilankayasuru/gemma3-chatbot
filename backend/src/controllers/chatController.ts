@@ -71,7 +71,7 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
 
     } catch (error) {
         console.error("Error generating message! " + error)
-        return res.status(500).json({ error: "Internal server error!", errors: error });
+        return res.status(500).json({ error: "Internal server error!", errors: error instanceof AggregateError ? error.errors : error });
     }
 }
 

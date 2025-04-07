@@ -7,6 +7,7 @@ services:
     restart: always
     depends_on:
       - ollama
+    env_file: ./.env
 
   ollama:
     image: ollama/ollama:latest
@@ -14,3 +15,8 @@ services:
       - "11434:11434"
     command: ["serve"]
     restart: always
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  ollama_data:

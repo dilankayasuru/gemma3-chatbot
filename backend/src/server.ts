@@ -4,8 +4,8 @@ import dotenv from "dotenv";
 import { connectDatabase } from "./config/database";
 import { StreamChat } from "stream-chat";
 
-import userRoutes from "../src/routes/userRoutes";
-import chatRoutes from "../src/routes/chatRoutes";
+import userRoutes from "./routes/userRoutes";
+import chatRoutes from "./routes/chatRoutes";
 
 dotenv.config();
 

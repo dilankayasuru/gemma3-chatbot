@@ -30,7 +30,10 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
             return res.status(400).json({ error: "Please register first!" })
         }
 
-        let chats = await Chat.find({ userId: userId }).sort({ createdAt: -1 }).limit(10);
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        let chats = await Chat.find({ userId: userId, createdAt: { $gte: startOfDay } }).sort({ createdAt: -1 }).limit(10);
 
         const context = chats.flatMap(chat => [
             { role: 'user', content: chat.message },
@@ -44,7 +47,7 @@ export const chat = async (req: Request, res: Response): Promise<any> => {
                 ...context,
                 { role: "user", content: message }
             ],
-            stream: false
+            stream: true
         })
 
         const assistantMessage = response.data.message.content;
